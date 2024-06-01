@@ -7,6 +7,7 @@ import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.db.models import Count
 # Create your views here.
 
 def index(request,tag=None):
@@ -17,7 +18,7 @@ def index(request,tag=None):
         posts = Post.objects.all()
         
     categories = Tags.objects.all()
-   
+
         
     context={
         'posts':posts,
@@ -159,6 +160,23 @@ def post_page_view(request,pk):
     post = get_object_or_404(Post,id=pk)
     commentform = CommentCreateForm()
     replyform = ReplyCreateForm()
+    
+    # if request.META.get("HTTP_HX_REQUEST"):
+    #     pass
+    
+    if request.htmx:
+        
+        # if 'top' in request.GET:
+        #     comments= post.comments.filter(likes_isnull=False)
+        # else:
+        #     comments = post.comments.all()
+        # return render(request, 'snippets/loop_postpage_comments.html', {'comments':comments})
+
+        if 'top' in request.GET:
+            comments = post.comments.annotate(num_likes=Count('likes')).filter(num_likes__gt=0).order_by('-num_likes')
+        else:
+            comments = post.comments.all()
+        return render(request, 'snippets/loop_postpage_comments.html', {'comments': comments, 'replyform': replyform})
     
     context={
         'post':post,

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'a_post',
     'a_users',
+    'django_htmx',
 ]
 
 MIDDLEWARE = [
@@ -44,6 +45,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'circle.urls'
