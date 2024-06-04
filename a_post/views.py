@@ -17,12 +17,11 @@ def index(request,tag=None):
     else:
         posts = Post.objects.all()
         
-    categories = Tags.objects.all()
+    
 
         
     context={
         'posts':posts,
-        'categories':categories,
         'tag':tag,
     }
     return render(request, 'a_post/home.html',context)
@@ -161,17 +160,11 @@ def post_page_view(request,pk):
     commentform = CommentCreateForm()
     replyform = ReplyCreateForm()
     
+    
     # if request.META.get("HTTP_HX_REQUEST"):
     #     pass
     
     if request.htmx:
-        
-        # if 'top' in request.GET:
-        #     comments= post.comments.filter(likes_isnull=False)
-        # else:
-        #     comments = post.comments.all()
-        # return render(request, 'snippets/loop_postpage_comments.html', {'comments':comments})
-
         if 'top' in request.GET:
             comments = post.comments.annotate(num_likes=Count('likes')).filter(num_likes__gt=0).order_by('-num_likes')
         else:
@@ -181,7 +174,8 @@ def post_page_view(request,pk):
     context={
         'post':post,
         'commentform' :commentform,
-        'replyform': replyform
+        'replyform': replyform,
+        
     }
     return render(request, 'a_post/post_page.html', context)
 

@@ -13,7 +13,8 @@
 
         {% block content %}{% endblock content %}
     </main>
-    {% include "include/sidebar.html" %}
+    {% load sidebar %}
+    {% sidebar_view tag user %}
 
 </content>
 
