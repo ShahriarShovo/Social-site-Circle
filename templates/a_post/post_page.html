@@ -1,31 +1,24 @@
-{% extends "layout/a.html" %}
-
+{% extends 'layout/a.html' %}
 
 {% block content %}
-{% include "a_post/post.html" %}
 
+{% include 'a_post/post.html' %}
 
 {% if user.is_authenticated %}
 <div class="card !pb-0 -mt-3">
-    <form class="flex items-center p-4" autocomplete="off" 
+    <form class="flex items-center p-4" autocomplete="off"
     hx-post="{% url 'comment-sent' post.id %}" 
     hx-target="#tab-contents" 
     hx-swap="afterbegin"
-    _="on htmx:afterRequest reset() me">
+    _="on htmx:afterRequest reset() me" >
         {% csrf_token %}
-        {{commentform}}
+        {{ commentform }}
         <button @click="open = false" class="block ml-2" type="submit">Submit</button>
     </form>
 </div>
 {% endif %}
 
-{% if post.comments.count %}
 <div class="mb-20">
-    {% comment %} <div id="tabs" class="ml-4 flex gap-1 mb-4" hx-target="#tab-contents" hx-swap="innerHTML"
-    _="on htmx:afterOnLoad take.selected for event.target">
-        <a hx-get="{% url 'post' post.id %}" class="tab selected">Newest First</a> 
-        <a hx-get="{% url 'post' post.id %}?top" class="tab">Top Comments</a>
-    </div> {% endcomment %}
     <div id="tabs" class="ml-4 flex gap-1 mb-4 {% if not post.comments.count %}hidden{% endif %}" hx-target="#tab-contents" hx-swap="innerHTML"
     _="on htmx:afterOnLoad take .selected for event.target">
         <a hx-get="{% url 'post' post.id %}" class="tab selected">Newest First</a> 
@@ -33,21 +26,10 @@
     </div>
 
     <div id="tab-contents">
-        {% for  comment in post.comments.all  %}
-        {% include "a_post/comment.html" %}
+        {% for comment in post.comments.all %}
+        {% include 'a_post/comment.html' %}
         {% endfor %}
-
     </div>
 </div>
-{% endif %}
 
-{% comment %} <script>
-    document.addEventListener('htmx:afterRequest', function(evt) {
-        if (evt.detail.target.id === 'tab-contents') {
-            document.querySelectorAll('#tabs .tab').forEach(tab => tab.classList.remove('selected'));
-            evt.detail.elt.classList.add('selected');
-        }
-    });
-</script> {% endcomment %}
-
-{% endblock content %}
+{% endblock %}
