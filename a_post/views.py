@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.db.models import Count
+from django.core.paginator import Paginator
 # Create your views here.
 
 def index(request,tag=None):
@@ -17,13 +18,25 @@ def index(request,tag=None):
     else:
         posts = Post.objects.all()
         
+    paginator = Paginator(posts, 3)
+    page = int(request.GET.get('page',1))
+    try:
+        posts = paginator.page(page)
+    except:
+        return HttpResponse('')
+        
     
 
         
     context={
         'posts':posts,
         'tag':tag,
+        'page':page
     }
+    
+    if request.htmx:
+        return render(request,'snippets/loop_home.html', context)
+    
     return render(request, 'a_post/home.html',context)
 
     

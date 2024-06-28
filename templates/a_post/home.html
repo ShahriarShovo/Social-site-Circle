@@ -6,7 +6,14 @@
 
 {% include "a_post/post.html" %}
 
-
 {% endfor %}
+
+<div hx-get = {% if tag %}{% url 'category' tag.slug %}
+    {% else %}"{% url 'index' %}
+    {% endif %}?page={{page|add:1}}"
+        hx-trigger="revealed"
+        hx-target="this"
+        hx-swap="outerHTML">
+</div>
 
 {% endblock content %}
