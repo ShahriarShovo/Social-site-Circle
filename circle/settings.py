@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'a_post',
     'a_users',
     'django_htmx',
+    'a_inbox',
+
 ]
 
 MIDDLEWARE = [
@@ -155,4 +157,4 @@ ACCOUNT_AUTHENTICATION_METHOD='email'
 ACCOUNT_EMAIL_REQUIRED=True
 
 
-ACCOUNT_USERNAME_BLACKLIST = [' admin', 'accounts','profile', 'category', 'post']
+ACCOUNT_USERNAME_BLACKLIST = [' admin', 'accounts','profile', 'category', 'post', 'inbox']

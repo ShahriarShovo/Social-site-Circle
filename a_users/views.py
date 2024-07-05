@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect,get_object_or_404, HttpResponse
 from a_users.forms import Profileform
 from django.contrib.auth.models import User
 from django.http import Http404
@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Count
 from a_post.views import ReplyCreateForm
+from a_inbox.forms import InboxNewMessageForm
+
 
 # Create your views here.
 @login_required
@@ -37,10 +39,11 @@ def profile_view(request, username=None):
         return render(request, 'snippets/loop_profile_posts.html', { 'posts': posts })
         
     
-    
+    new_message_form = InboxNewMessageForm()
     context={
         'profile':profile,
         'posts':posts,
+        'new_message_form' : new_message_form,
     }
     return render(request,'a_users/profile.html', context)
 
@@ -71,7 +74,7 @@ def profile_delete_view(request):
         logout(request)
         user.delete()
         messages.success(request, 'Account deleted, what a pity')
-        return redirect('index')
-        
-        
+        return redirect('index') 
     return render(request, 'a_users/profile_delete.html')
+
+
