@@ -6,8 +6,12 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from a_users.models import Profile
 from .forms import InboxNewMessageForm
+from django.conf import settings
 
+from cryptography.fernet import Fernet
 # Create your views here.
+
+f = Fernet(settings.ENCRYPT_KEY)
 
 
 @login_required
@@ -46,6 +50,8 @@ def search_users(request):
     
     
     
+    
+
 @login_required     
 def new_message(request, recipient_id):
     recipient = get_object_or_404( User, id=recipient_id)
@@ -55,7 +61,16 @@ def new_message(request, recipient_id):
         form = InboxNewMessageForm(request.POST)
         if form.is_valid():
             message = form.save(commit=False)
+
+            # encrypt message
+            message_original = form.cleaned_data['body']
+            message_bytes = message_original.encode('utf-8')
+            message_encrypted = f.encrypt(message_bytes)
+            message_decoded = message_encrypted.decode('utf-8')
+            message.body = message_decoded
+            
             message.sender = request.user
+            
             my_conversations = request.user.conversations.all()
             for c in my_conversations:
                 if recipient in c.participants.all():
@@ -90,6 +105,13 @@ def new_reply(request, conversation_id):
         form = InboxNewMessageForm(request.POST)
         if form.is_valid():
             message = form.save(commit=False)
+
+            # encrypt message
+            message_original = form.cleaned_data['body']
+            message_bytes = message_original.encode('utf-8')
+            message_encrypted = f.encrypt(message_bytes)
+            message_decoded = message_encrypted.decode('utf-8')
+            message.body = message_decoded
             
             message.sender = request.user
             message.conversation = conversation
